@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Удалить {{ object_type }}</title>
+</head>
+<body>
+    <h2>Вы уверены, что хотите удалить этот {{ object_type }}?</h2>
+    
+    <div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0;">
+        {% if object_type == 'пост' %}
+            <h3>{{ object.title }}</h3>
+            <p>{{ object.text|truncatewords:50 }}</p>
+        {% else %}
+            <p><strong>Автор:</strong> {{ object.author.username }}</p>
+            <p><strong>Текст:</strong> {{ object.text }}</p>
+        {% endif %}
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" style="background-color: red; color: white; padding: 10px 20px;">
+            Да, удалить
+        </button>
+        <a href="{% url back_url back_id %}" style="padding: 10px 20px; text-decoration: none;">
+            Отмена
+        </a>
+    </form>
+</body>
+</html>

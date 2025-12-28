@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Профиль {{ profile_user.username }}</title>
+</head>
+<body>
+    <h1>Профиль пользователя: {{ profile_user.username }}</h1>
+    
+    <p>Имя: {{ profile_user.first_name }}</p>
+    <p>Фамилия: {{ profile_user.last_name }}</p>
+    <p>Email: {{ profile_user.email }}</p>
+    
+    <h2>Публикации пользователя:</h2>
+    
+    {% for post in page_obj %}
+    <div>
+        <h3><a href="{% url 'blog:post_detail' post.id %}">{{ post.title }}</a></h3>
+        
+        {% if post.image %}
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" width="200">
+        {% endif %}
+        
+        <p>{{ post.text|truncatewords:30 }}</p>
+        <p>Дата: {{ post.pub_date|date:"d.m.Y H:i" }}</p>
+        <hr>
+    </div>
+    {% empty %}
+    <p>Пока нет публикаций.</p>
+    {% endfor %}
+    
+    <!-- Пагинация -->
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
+        {% endif %}
+        
+        <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">следующая</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">последняя &raquo;</a>
+        {% endif %}
+    </div>
+    
+    <br>
+    <a href="{% url 'blog:index' %}">На главную</a>
+    {% if request.user == profile_user %}
+        <a href="{% url 'blog:post_create' %}">Создать новый пост</a>
+    {% endif %}
+</body>
+</html>

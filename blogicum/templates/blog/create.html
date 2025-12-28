@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        {% if editing %}Редактировать пост{% else %}Создать новый пост{% endif %}
+    </title>
+</head>
+<body>
+    <h1>{% if editing %}Редактировать пост{% else %}Создать новый пост{% endif %}</h1>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div>
+            <label>Заголовок:</label>
+            <input type="text" name="title" 
+                   value="{% if form.instance.title %}{{ form.instance.title }}{% endif %}" 
+                   required>
+        </div>
+        
+        <div>
+            <label>Текст:</label>
+            <textarea name="text" rows="10" required>{% if form.instance.text %}{{ form.instance.text }}{% endif %}</textarea>
+        </div>
+        
+        <div>
+            <label>Изображение:</label>
+            <input type="file" name="image">
+            {% if form.instance.image %}
+                <p>Текущее изображение: {{ form.instance.image.name }}</p>
+                <img src="{{ form.instance.image.url }}" width="100">
+            {% endif %}
+        </div>
+        
+        <div>
+            <label>Категория:</label>
+            <select name="category">
+                <option value="">Выберите категорию</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" 
+                    {% if form.instance.category.id == category.id %}selected{% endif %}>
+                    {{ category.title }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div>
+            <label>Местоположение:</label>
+            <select name="location">
+                <option value="">Выберите местоположение</option>
+                {% for location in locations %}
+                <option value="{{ location.id }}"
+                    {% if form.instance.location.id == location.id %}selected{% endif %}>
+                    {{ location.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button type="submit">
+            {% if editing %}Сохранить изменения{% else %}Опубликовать{% endif %}
+        </button>
+        
+        {% if editing %}
+            <a href="{% url 'blog:post_detail' form.instance.id %}">Отмена</a>
+        {% endif %}
+    </form>
+    
+    <br>
+    <a href="{% url 'blog:index' %}">На главную</a>
+</body>
+</html>
